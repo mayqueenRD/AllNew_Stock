@@ -1,0 +1,14 @@
+#!/bin/bash
+mode=$1
+code=$2
+
+#income 營收
+#bonus 股利
+
+if [[ "$1" == "income" ]]; then
+    wget "https://tw.finance.yahoo.com/d/s/dividend_"$code".html" -O income/"$code"".html"
+elif [[ "$1" == "bonus" ]]; then
+    wget "https://tw.finance.yahoo.com/d/s/earning_"$code".html" -O bonus/"$code"".html"
+fi
+
+sync

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+get_price_one(){
+    ./get_pricestock "$@"
+}
+
+get_price_all(){
+    ./get_allpricestock
+}
+
+get_fucker_one(){
+    ./get_onestock "$@"
+}
+
+get_fucker_all(){
+    ./get_allstock "$@"
+}
+
+get_yahoo_one(){
+    ./get_yahoodata "$@"
+}
+
+get_yahoo_all(){
+    cat codelist | while read codeline; do
+        ./get_yahoodata income $codeline
+        ./get_yahoodata bonus $codeline
+    done
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function gen_60_months {
+    python << EOF
+import datetime
+d = datetime.date.today()
+m = ''.join(map(lambda s: s if len(s) > 2 else '0' + s, map(str, d.timetuple()[:2])))
+
+for i in range(60):
+    days=(d - datetime.timedelta(days=i*30))
+    m = ''.join(map(lambda s: s if len(s) > 1 else '0' + s, map(str, days.timetuple()[:2])))
+    print m
+EOF
+}
+
+cat codelist | while read codeline; do
+    mkdir -p "price/$codeline"
+    gen_60_months | while read monline; do
+
+    wget -O - "http://www.twse.com.tw/ch/trading/exchange/STOCK_DAY/STOCK_DAY_print.php?genpage=genpage/Report"$monline"/"$monline"_F3_1_8_"$codeline".php&type=csv" > price/"$codeline"/"$monline"_"$codeline".csv
+    sleep 0.2
+    iconv -f big5 -t utf-8 "price/"$codeline"/"$monline"_"$codeline".csv" -o "price/"$codeline"/"$monline"_"$codeline".csv"
+
+    done
+done

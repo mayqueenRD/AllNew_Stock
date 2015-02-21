@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <h1>MayQueen StockKing 系統</h1>
+  <h3>歷年股價查詢</h3>
+  <p></p>
+  <form action="/price" method="POST">
+  <br><br>
+  <input onfocus="HS_setDate(this)" readonly="" id="datelist_from" name="datelist_from" type="text" value="選擇開始日期" />
+  <br><br>
+  <input onfocus="HS_setDate(this)" readonly="" id="datelist_to" name="datelist_to" type="text" value="選擇結束日期" />
+  <br><br> 
+  <input type="text" id="codeinput" name="codeinput" />
+  <br><br>
+  <input type="submit" name="btn_ok" class ="btn-primary" value="確認">
+  </form>
+  <br>
+  <h2>收盤價平均: {{ price_avg }}</h2>
+  <table border="1">
+  <tr>
+      <td>日期</td><td>成交股數</td><td>成交金額</td><td>開盤價</td><td>最高價</td><td>最低價</td><td>收盤價</td><td>漲跌價差</td><td>成交筆數</td>
+  </tr>
+  {% for row in message %}
+      <tr>
+      {% for column in row %}
+      <td>
+      {{ column }}
+      </td>
+      {% endfor %}
+      </tr>
+  {% endfor %}
+  </table>
+
+  <script src="/static/js/selectDate.js" type="text/javascript"></script>
+
+</body>
+</html>

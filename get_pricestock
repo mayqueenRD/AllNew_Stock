@@ -1,0 +1,13 @@
+#!/bin/bash
+
+days=$1
+code=$2
+
+wget -O - "http://www.twse.com.tw/ch/trading/exchange/STOCK_DAY/STOCK_DAY_print.php?genpage=genpage/Report"$1"/"$1"_F3_1_8_"$2".php&type=csv" > price/"$code"/"$days"_"$code".csv
+
+sleep 0.2
+
+iconv -f big5 -t utf-8 "price/"$code"/"$days"_"$code".csv" -o "price/"$code"/"$days"_"$code".csv"
+
+#mv /root/"$days.csv" /root/stock_ui/toshin/
+
