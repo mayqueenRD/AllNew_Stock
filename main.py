@@ -55,11 +55,11 @@ def network(search):
         for i in range(date_dis.days):
             date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
             if the_list == "投信買賣超統計":
-                proc = subprocess.Popen(['toshin/mini','-toshin','toshin/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+                proc = subprocess.Popen(['./mini','-toshin','toshin/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
             elif the_list == "外資買賣超統計":
-                proc = subprocess.Popen(['waitsu/mini','-waitsu','waitsu/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+                proc = subprocess.Popen(['./mini','-waitsu','waitsu/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
             elif the_list == "自營商買賣超統計":
-                proc = subprocess.Popen(['tsuyinshan/mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+                proc = subprocess.Popen(['./mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
 
             (out, err) = proc.communicate()
             message.append([date.isoformat()] + out.split("\t"))
