@@ -15,14 +15,6 @@ app = Flask(__name__)
 def main():
     return render_template('index.html')
 
-@app.route("/3p")
-def threep():
-    return render_template('3p.htm')
-
-@app.route("/price")
-def price():
-    return render_template('price.htm')
-
 @app.route("/<search>" ,methods=['GET' , 'POST'])
 def network(search):
 
@@ -45,34 +37,20 @@ def network(search):
     page = ''
     total_price=0
 
-    if search == "search":
-        page='3p.htm'
-        code_input=request.form['codeinput']
-        the_list=request.form['thelist']
+    mode=''
+    code_input=request.form['codeinput']
+    the_list=request.form['thelist']
+    #date_list_from= date_list_from.replace('-', '')
 
-        #date_list_from= date_list_from.replace('-', '')
-
-        for i in range(date_dis.days):
-            date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
-            if the_list == "投信買賣超統計":
-                proc = subprocess.Popen(['./mini','-toshin','toshin/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
-            elif the_list == "外資買賣超統計":
-                proc = subprocess.Popen(['./mini','-waitsu','waitsu/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
-            elif the_list == "自營商買賣超統計":
-                proc = subprocess.Popen(['./mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
-
-            (out, err) = proc.communicate()
-            message.append([date.isoformat()] + out.split("\t"))
-    elif search == "price":
-
-        page='price.htm'
-        code_input=request.form['codeinput']
+    if the_list == "股價統計":
+        mode='price'
         #date_list_from= date_list_from.replace('-', '')
         total_cnt=0
         for i in range(date_dis.days+1):
           date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
           m = ''.join(map(lambda s: s if len(s) > 1 else '0' + s, map(str, date.timetuple()[:2])))
-          proc = subprocess.Popen(['price/mini','-p', 'price/' + code_input + '/' + m + '_' + code_input + '.csv', date.isoformat().replace('-', '/')], stdout=subprocess.PIPE)
+          proc = subprocess.Popen(['./mini','-p', 'price/' + code_input + '/' + m + '_' + code_input + '.csv', date.isoformat().replace('-', '/')], stdout=subprocess.PIPE)
+
           (out, err) = proc.communicate()
 
           if len(out.split("\t"))>=5:
@@ -81,15 +59,27 @@ def network(search):
 
           message.append(out.split("\t"))
 #         message = [[l.split('\t') for l in b.split('\n')] for b in out]
-#           message = [l.split('\t') for l in out.split('\n')]
-
-        total_price=round(total_price/total_cnt,2)
+#         message = [l.split('\t') for l in out.split('\n')]
+          #total_price=round(total_price/total_cnt,2)
+    else :
+        mode='3p'
+        for i in range(date_dis.days):
+            date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
+            if the_list == "投信買賣超統計":
+                proc = subprocess.Popen(['./mini','-toshin','toshin/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+            elif the_list == "外資買賣超統計":
+                proc = subprocess.Popen(['./mini','-waitsu','waitsu/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+            elif the_list == "自營商買賣超統計":
+                proc = subprocess.Popen(['./mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+            (out, err) = proc.communicate()
+            message.append([date.isoformat()] + out.split("\t"))
 
     templateData = {
-        'price_avg' : total_price,
-        'message' : message
+#        'price_avg' : total_price,
+        'message' : message,
+        'mode' : mode
     }
-    return render_template(page,**templateData)
+    return render_template('result.htm',**templateData)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
