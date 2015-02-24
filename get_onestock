@@ -2,12 +2,13 @@
 
 DES_PATH="$1"
 
-days=$(date --date="yesterday" +"%Y-%m-%d")
+#input $2 format: %Y-%m-%d
+#days=$(date --date="yesterday" +"%Y-%m-%d")
 
-year=$(echo "$days" |  awk -F- '{print $1}')
+year=$(echo "$2" |  awk -F- '{print $1}')
 year_c=$[$year-1911]
-month=$(echo "$days" |  awk -F- '{print $2}')
-day=$(echo "$days" |  awk -F- '{print $3}')
+month=$(echo "$2" |  awk -F- '{print $2}')
+day=$(echo "$2" |  awk -F- '{print $3}')
 
 if [[ "$1" == "waitsu" ]]; then
     wget --post-data="download=csv&qdate=$year_c%2F$month%2F$day&sorting=by_issue" http://www.twse.com.tw/ch/trading/fund/TWT38U/TWT38U.php -O $DES_PATH/"$year""$month""$day".csv

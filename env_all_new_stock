@@ -13,7 +13,12 @@ get_fucker_one(){
 }
 
 get_fucker_all(){
-    ./get_allstock "$@"
+    ./get_allstock waitsu
+    sync
+    ./get_allstock toshin
+    sync
+    ./get_allstock tsuyinshan
+    sync
 }
 
 get_yahoo_one(){
@@ -26,3 +31,15 @@ get_yahoo_all(){
         ./get_yahoodata bonus $codeline
     done
 }
+
+update_all_manual_date(){
+    ./get_onestock waitsu "$@"
+    ./get_onestock toshin "$@"
+    ./get_onestock tsuyinshan "$@"
+
+    cat codelist | while read codeline; do
+        ./get_pricestock "$@" $codeline
+        ./get_pricestock "$@" $codeline
+    done
+}
+
