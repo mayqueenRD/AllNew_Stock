@@ -40,7 +40,7 @@ display_cols(char * const * const cols, const size_t cols_count)
 
 	while (i < cols_count)
 	{
-		if(i==0)
+		if(i==check_val)
 		{
 			if(strcmp(code_str,cols[i])!=0)
 				return 0;
