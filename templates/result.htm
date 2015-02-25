@@ -5,12 +5,84 @@
     <link href="/static/js/nv.d3.css" rel="stylesheet" type="text/css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
     <script src="/static/js/nv.d3.js"></script>
+    <style>
+        text {
+            font: 12px sans-serif;
+        }
 
+        svg {
+            display: block;
+        }
+        html, body, #chart1, svg {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+        }
+        button {
+            margin: 2px;
+            margin-left: 70px;
+        }
+    </style>
 </head>
 <body>
   <h1>2015 MayQueen 股神網系統</h1>
   <p></p>
   <br>
+  
+  <div id="chart1" class='with-3d-shadow with-transitions'>
+    <svg> </svg>
+  </div>
+
+  <script>
+    var testdata = [
+        {
+            "key" : "買賣超股數" ,
+            "bar": true,
+            "values" :  [  {% for row in test %}[ {{row[0]}} , {{row[1]}}] ,{% endfor %}]
+        },
+        {
+            "key" : "Price" ,
+            "values" : [[0,0]]
+        }
+    ].map(function(series) {
+            series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+            return series;
+        });
+
+    var chart;
+    nv.addGraph(function() {
+        chart = nv.models.linePlusBarChart()
+            .margin({top: 50, right: 60, bottom: 30, left: 70})
+            .x(function(d,i) { return i })
+            .legendRightAxisHint(' [Using Right Axis]')
+            .color(d3.scale.category10().range());
+
+        chart.xAxis.tickFormat(function(d) {
+            var dx = testdata[0].values[d] && testdata[0].values[d].x || 0;
+            return dx ? d3.time.format('%x')(new Date(dx)) : '';
+            })
+            .showMaxMin(false);
+
+        chart.y1Axis.tickFormat(function(d) { return '$' + d3.format(',f')(d) });
+        chart.bars.forceY([0]).padData(false);
+
+        chart.xAxis.showMaxMin(false);
+        chart.x2Axis.showMaxMin(false);
+
+        d3.select('#chart1 svg')
+            .datum(testdata)
+            .transition().duration(500).call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+
+        return chart;
+    });
+
+  </script>
+
   <table border="1">
   <tr>
   {% if mode == '3p' %}

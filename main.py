@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 import sys
 import os
 import subprocess
-import datetime
+import datetime, time
 
 reload(sys)  # Reload does the trick!
 sys.setdefaultencoding('UTF8')
@@ -34,6 +34,7 @@ def network(search):
 
     date_dis = datetime.datetime(*map(int, date_list_to.split('-'))) - datetime.datetime(*map(int, date_list_from.split('-')))
     message = list()
+    test = list()
     page = ''
     total_price=0
 
@@ -74,10 +75,16 @@ def network(search):
             (out, err) = proc.communicate()
             message.append([date.isoformat()] + out.split("\t"))
 
+            if len(out.split("\t"))>1:
+                test.append([time.mktime(date.timetuple())*1000] + [out.split("\t")[4]] )
+            else:
+                test.append([time.mktime(date.timetuple())*1000] + ['0'] )
+
     templateData = {
 #        'price_avg' : total_price,
         'message' : message,
-        'mode' : mode
+        'mode' : mode,
+        'test' : test
     }
     return render_template('result.htm',**templateData)
 
