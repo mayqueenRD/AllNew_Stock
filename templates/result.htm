@@ -39,11 +39,12 @@
         {
             "key" : "買賣超股數" ,
             "bar": true,
-            "values" :  [  {% for row in test %}[ {{row[0]}} , {{row[1]}}] ,{% endfor %}]
+            "values" :  [  {% for row in fucker %}[ {{row[0]}} , {{row[1]}}] ,{% endfor %}]
         },
         {
-            "key":"",
-            "values": [[0,0]]
+            "key":"股價",
+            "values": [  {% for row in price %}[ {{row[0]}} , {{row[1]}}] ,{% endfor %}]
+ 
         }
     ].map(function(series) {
             series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });

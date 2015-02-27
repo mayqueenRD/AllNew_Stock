@@ -29,11 +29,11 @@ display_cols(char * const * const cols, const size_t cols_count)
 
 	if(stock_mode==tsuyinshan)
 		check_val=0;
-	else if(stock_mode=toshin)
+	else if(stock_mode==toshin)
 		check_val=1;
-	else if(stock_mode=waitsu)
+	else if(stock_mode==waitsu)
 		check_val=1;
-	else if(stock_mode=price)
+	else if(stock_mode==price)
 		check_val=0;
 
 	sprintf(code_str,"%s",code);

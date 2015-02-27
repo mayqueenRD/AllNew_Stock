@@ -34,57 +34,38 @@ def network(search):
 
     date_dis = datetime.datetime(*map(int, date_list_to.split('-'))) - datetime.datetime(*map(int, date_list_from.split('-')))
     message = list()
-    test = list()
-    page = ''
-    total_price=0
+    price = list()
+    fucker = list()
 
-    mode=''
     code_input=request.form['codeinput']
     the_list=request.form['thelist']
-    #date_list_from= date_list_from.replace('-', '')
+    for i in range(date_dis.days+1):
 
-    if the_list == "股價統計":
-        mode='price'
-        #date_list_from= date_list_from.replace('-', '')
-        total_cnt=0
-        for i in range(date_dis.days+1):
-          date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
-          m = ''.join(map(lambda s: s if len(s) > 1 else '0' + s, map(str, date.timetuple()[:2])))
-          proc = subprocess.Popen(['./mini','-p', 'price/' + code_input + '/' + m + '_' + code_input + '.csv', date.isoformat().replace('-', '/')], stdout=subprocess.PIPE)
+        date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
+        m = ''.join(map(lambda s: s if len(s) > 1 else '0' + s, map(str, date.timetuple()[:2])))
+        proc = subprocess.Popen(['./mini','-p', 'price/' + code_input + '/' + m + '_' + code_input + '.csv', date.isoformat().replace('-', '/')], stdout=subprocess.PIPE)
+        (out_price, err) = proc.communicate()
 
-          (out, err) = proc.communicate()
+        if len(out_price.split("\t"))>1:
+            price.append([time.mktime(date.timetuple())*1000] + [out_price.split("\t")[6]] )
 
-          if len(out.split("\t"))>=5:
-            total_price+=float(out.split("\t")[6])
-            total_cnt+=1
 
-          message.append(out.split("\t"))
-#         message = [[l.split('\t') for l in b.split('\n')] for b in out]
-#         message = [l.split('\t') for l in out.split('\n')]
-          #total_price=round(total_price/total_cnt,2)
-    else :
-        mode='3p'
-        for i in range(date_dis.days):
-            date = datetime.date(*map(int, date_list_from.split('-'))) + datetime.timedelta(days=i)
-            if the_list == "投信買賣超統計":
-                proc = subprocess.Popen(['./mini','-toshin','toshin/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
-            elif the_list == "外資買賣超統計":
-                proc = subprocess.Popen(['./mini','-waitsu','waitsu/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
-            elif the_list == "自營商買賣超統計":
-                proc = subprocess.Popen(['./mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
-            (out, err) = proc.communicate()
-            message.append([date.isoformat()] + out.split("\t"))
+        if the_list == "投信買賣超統計":
+            proc = subprocess.Popen(['./mini','-toshin','toshin/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+        elif the_list == "外資買賣超統計":
+            proc = subprocess.Popen(['./mini','-waitsu','waitsu/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+        elif the_list == "自營商買賣超統計":
+            proc = subprocess.Popen(['./mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
+        (out, err) = proc.communicate()
+        message.append([date.isoformat()] + out.split("\t"))
 
-            if len(out.split("\t"))>1:
-                test.append([time.mktime(date.timetuple())*1000] + [out.split("\t")[4]] )
-            else:
-                test.append([time.mktime(date.timetuple())*1000] + ['0'] )
+        if len(out.split("\t"))>1:
+            fucker.append([time.mktime(date.timetuple())*1000] + [out.split("\t")[4]] )
 
     templateData = {
-#        'price_avg' : total_price,
         'message' : message,
-        'mode' : mode,
-        'test' : test
+        'fucker' : fucker,
+        'price' : price
     }
     return render_template('result.htm',**templateData)
 
