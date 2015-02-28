@@ -65,7 +65,8 @@ def network(search):
     templateData = {
         'message' : message,
         'fucker' : fucker,
-        'price' : price
+        'price' : price,
+        'code'  : code_input
     }
     return render_template('result.htm',**templateData)
 
