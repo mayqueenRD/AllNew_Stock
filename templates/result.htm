@@ -85,11 +85,7 @@
 
   <table border="1">
   <tr>
-  {% if mode == '3p' %}
       <td>日期</td><td>證券代號</td><td>證券名稱</td><td>買進股數</td><td>賣出股數</td><td>買賣超股數</td>
-  {% elif mode == 'price' %}
-      <td>日期</td><td>成交股數</td><td>成交金額</td><td>開盤價</td><td>最高價</td><td>最低價</td><td>收盤價</td><td>漲跌價差</td><td>成交筆數</td>
-  {% endif %}
   </tr>
   {% for row in message %}
       <tr>
