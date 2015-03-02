@@ -5,10 +5,23 @@ code=$2
 #income 營收
 #bonus 股利
 
+
 if [[ "$1" == "income" ]]; then
-    wget "https://tw.finance.yahoo.com/d/s/dividend_"$code".html" -O income/"$code"".html"
+    key_str="earning"
+    key_num=3
 elif [[ "$1" == "bonus" ]]; then
-    wget "https://tw.finance.yahoo.com/d/s/earning_"$code".html" -O bonus/"$code"".html"
+    key_str="dividend"
+    key_num=2
 fi
 
+
+wget "https://tw.finance.yahoo.com/d/s/"$key_str"_"$code".html" -O "$1"/"$code"".html"
+./html2xml "$1"/"$code"".html" "$1"/"$code"".xml"
+sync
+iconv -f big5 -t utf-8  "$1"/"$code"".xml" -o "$1"/"$code"".xml"
+sync
+#rm "$1"/"$code"".html"
+./XML_Parser "$key_num" "$1"/"$code"".xml" "$1"/"$code"".csv"
+sync
+#rm "$1"/"$code"".xml"
 sync
