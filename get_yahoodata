@@ -2,8 +2,8 @@
 mode=$1
 code=$2
 
-#income 營收
-#bonus 股利
+#income 股利
+#bonus 營收
 
 
 if [[ "$1" == "income" ]]; then
