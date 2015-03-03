@@ -8,10 +8,10 @@ code=$2
 
 if [[ "$1" == "income" ]]; then
     key_num=2
-    wget "https://tw.finance.yahoo.com/d/s/earning_"$code".html" -O "$1"/"$code"".html"
+    wget --no-check-certificate "https://tw.finance.yahoo.com/d/s/earning_"$code".html" -O "$1"/"$code"".html"
 elif [[ "$1" == "bonus" ]]; then
     key_num=3
-    wget "https://tw.finance.yahoo.com/d/s/dividend_"$code".html" -O "$1"/"$code"".html"
+    wget --no-check-certificate "https://tw.finance.yahoo.com/d/s/dividend_"$code".html" -O "$1"/"$code"".html"
 fi
 
 ./html2xml "$1"/"$code"".html" "$1"/"$code"".xml"
