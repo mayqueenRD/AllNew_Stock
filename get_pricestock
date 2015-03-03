@@ -1,9 +1,13 @@
 #!/bin/bash
 
-days=$1
 code=$2
 
-wget -O - "http://www.twse.com.tw/ch/trading/exchange/STOCK_DAY/STOCK_DAY_print.php?genpage=genpage/Report"$1"/"$1"_F3_1_8_"$2".php&type=csv" > price/"$code"/"$days"_"$code".csv
+year=$(echo "$1" |  awk -F- '{print $1}')
+month=$(echo "$1" |  awk -F- '{print $2}')
+
+days="$year""$month"
+
+wget -O - "http://www.twse.com.tw/ch/trading/exchange/STOCK_DAY/STOCK_DAY_print.php?genpage=genpage/Report"$days"/"$days"_F3_1_8_"$code".php&type=csv" > price/"$code"/"$days"_"$code".csv
 
 sleep 0.2
 

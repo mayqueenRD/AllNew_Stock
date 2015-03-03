@@ -6,7 +6,7 @@ import datetime
 d = datetime.date.today()
 m = ''.join(map(lambda s: s if len(s) > 2 else '0' + s, map(str, d.timetuple()[:2])))
 
-for i in range(60):
+for i in range(6):
     days=(d - datetime.timedelta(days=i*30))
     m = ''.join(map(lambda s: s if len(s) > 1 else '0' + s, map(str, days.timetuple()[:2])))
     print m

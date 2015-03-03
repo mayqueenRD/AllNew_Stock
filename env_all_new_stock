@@ -1,7 +1,9 @@
 #!/bin/bash
 
 get_price_one(){
-    ./get_pricestock "$@"
+    cat codelist | while read codeline; do
+        ./get_pricestock "$@" $codeline
+    done
 }
 
 get_price_all(){
