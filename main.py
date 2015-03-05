@@ -36,6 +36,7 @@ def network(search):
     message = list()
     price = list()
     fucker = list()
+    bonus = list()
 
     code_input=request.form['codeinput']
     the_list=request.form['thelist']
@@ -62,11 +63,22 @@ def network(search):
         if len(out.split("\t"))>1:
             fucker.append([time.mktime(date.timetuple())*1000] + [out.split("\t")[4]] )
 
+    cmd = './mini -bonus bonus/%s.csv > bonus.temp' % (code_input)
+    os.system(cmd)
+
+    sc = open('bonus.temp', 'r')
+    for line in sc.readlines():
+        bonus.append(line.split("\t"))
+    sc.close()
+
+    os.system('rm bonus.temp')
+
     templateData = {
         'message' : message,
         'fucker' : fucker,
         'price' : price,
-        'code'  : code_input
+        'code'  : code_input,
+        'bonus' : bonus
     }
     return render_template('result.htm',**templateData)
 

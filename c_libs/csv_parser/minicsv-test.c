@@ -182,7 +182,7 @@ main(int argc, char *argv[])
 				if(ret==2)
 					break;
 
-				//printf("\t");
+				printf("\n");
 			}
 			else
 				break;
