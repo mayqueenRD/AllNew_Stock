@@ -9,11 +9,17 @@ typedef enum{
 	toshin,
     tsuyinshan,
 	price,
+	income,
+	bonus,
 }SOLD_MODE;
+
+#define BONUS_MIN	(93)
+#define INCOME_MAX	(12)
 
 static char code[32]={0};
 static unsigned char price_cnt=0;
 static SOLD_MODE stock_mode;
+static const int check_val[6]={1,1,0,0,0,0};
 
 static int display_cols(char * const * const cols, const size_t cols_count);
 static void help_func(void);
@@ -25,38 +31,58 @@ display_cols(char * const * const cols, const size_t cols_count)
 {
 	size_t i = (size_t) 0U;
 	char code_str[16]={0};
-	int ret=0,check_val;
-
-	if(stock_mode==tsuyinshan)
-		check_val=0;
-	else if(stock_mode==toshin)
-		check_val=1;
-	else if(stock_mode==waitsu)
-		check_val=1;
-	else if(stock_mode==price)
-		check_val=0;
+	int ret=0;
 
 	sprintf(code_str,"%s",code);
 
 	while (i < cols_count)
 	{
-		if(i==check_val)
+		if(i==check_val[stock_mode])
 		{
-			if(strcmp(code_str,cols[i])!=0)
-				return 0;
+			if(stock_mode==bonus)
+			{
+				if(atoi(cols[i])>=BONUS_MIN)
+					ret=1;
+				else
+					return 0;
+			}
+			else if(stock_mode==income)
+			{
+				if(atoi(cols[i])>=1 && atoi(cols[i])<=INCOME_MAX)
+					ret=(atoi(cols[i])==INCOME_MAX)? 2:1;
+				else
+					return 0;
+			}	
 			else
-				ret=1;
+			{
+				if(strcmp(code_str,cols[i])!=0)
+					return 0;
+				else
+					ret=1;
+			}
 		}
 
-		if(ret==1)
+		if(ret>0)
 		{
 			if(stock_mode==tsuyinshan)
 			{
 				if(i<2 || i>7)
 					printf("%s\t", cols[i]);
 			}
+			else if(stock_mode==bonus)
+			{
+				if(i==0 || i==5)
+					printf("%s\t", cols[i]);
+			}
 			else
 			{
+				if(stock_mode==income)
+				{
+					if(i==3)
+					{
+						printf("\n");
+					}
+				}
 				printf("%s\t", cols[i]);
 			}
 		}
@@ -87,7 +113,7 @@ main(int argc, char *argv[])
     char  *cols[20];
     char  *r;
     size_t cols_count;
-	int recordcnt=0;
+	int recordcnt=0,ret;
 	int scan_tmp1,scan_tmp2,scan_tmp3;
 	char tmp[1024]={0x0},type[16]={0x0};
 	FILE *in=(FILE*)NULL;
@@ -125,6 +151,17 @@ main(int argc, char *argv[])
 		sprintf(code," %d/%02d/%02d",scan_tmp1,scan_tmp2,scan_tmp3);
 		stock_mode=price;
 	}
+	else if(strcmp(type,"-income")==0)
+	{
+		stock_mode=income;
+
+	
+	}
+	else if(strcmp(type,"-bonus")==0)
+	{
+		stock_mode=bonus;
+	
+	}
 	else
 	{
 		printf("error input\n");
@@ -137,8 +174,19 @@ main(int argc, char *argv[])
 		recordcnt++;
 
 		r = minicsv_parse_line(tmp, cols, &cols_count, sizeof cols / sizeof cols[0]);
-		if(display_cols(cols, cols_count)==1)
-			break;
+		ret=display_cols(cols, cols_count);
+		if(ret)
+		{
+			if(stock_mode==bonus || stock_mode==income)
+			{
+				if(ret==2)
+					break;
+
+				//printf("\t");
+			}
+			else
+				break;
+		}
 	}
 
 exit:
