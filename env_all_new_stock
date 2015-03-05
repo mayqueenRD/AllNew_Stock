@@ -45,3 +45,11 @@ update_all_manual_date(){
     done
 }
 
+throw_all_data(){
+    rm bonus/*.csv
+    rm income/*.csv
+    rm waitsu/*.csv
+    rm toshin/*.csv
+    rm tsuyinshan/*.csv
+    rm -rf price/*
+}
