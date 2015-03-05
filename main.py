@@ -69,6 +69,7 @@ def network(search):
     sc = open('bonus.temp', 'r')
     for line in sc.readlines():
         bonus.append(line.split("\t"))
+
     sc.close()
 
     os.system('rm bonus.temp')
