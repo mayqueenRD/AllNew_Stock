@@ -33,10 +33,11 @@ def network(search):
         date_list_to= date_list_to[:date_list_to.rfind('-') + 1] + '0' + date_list_to[date_list_to.rfind('-') + 1:]
 
     date_dis = datetime.datetime(*map(int, date_list_to.split('-'))) - datetime.datetime(*map(int, date_list_from.split('-')))
-    message = list()
+#    message = list()
     price = list()
     fucker = list()
     bonus = list()
+    income = [[] for i in range(12)]
 
     code_input=request.form['codeinput']
     the_list=request.form['thelist']
@@ -58,8 +59,7 @@ def network(search):
         elif the_list == "自營商買賣超統計":
             proc = subprocess.Popen(['./mini','-tsuyinshan', 'tsuyinshan/' + date.isoformat().replace('-', '') + '.csv', code_input], stdout=subprocess.PIPE)
         (out, err) = proc.communicate()
-        message.append([date.isoformat()] + out.split("\t"))
-
+        #message.append([date.isoformat()] + out.split("\t"))
         if len(out.split("\t"))>1:
             fucker.append([time.mktime(date.timetuple())*1000] + [out.split("\t")[4]] )
 
@@ -71,15 +71,31 @@ def network(search):
         bonus.append(line.split("\t"))
 
     sc.close()
-
     os.system('rm bonus.temp')
 
+    cmd = './mini -income income/%s.csv > income.temp' % (code_input)
+    os.system(cmd)
+
+    sc = open('income.temp', 'r')
+    income_cnt=0
+    for line in sc.readlines():
+        if income_cnt%2==0:
+            income[income_cnt/2].append(line.split("\t")[1].replace(',',''))
+        else:
+            if line.split("\t")[1]=='-':
+                income[income_cnt/2].append(0)
+            else:
+                income[income_cnt/2].append(line.split("\t")[1].replace(',',''))
+        income_cnt+=1
+    sc.close()
+    os.system('rm income.temp')
+
     templateData = {
-        'message' : message,
         'fucker' : fucker,
         'price' : price,
         'code'  : code_input,
-        'bonus' : bonus
+        'bonus' : bonus,
+        'income': income
     }
     return render_template('result.htm',**templateData)
 
