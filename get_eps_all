@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#default 5 years
+
+function gen_60_months {
+    python << EOF
+import datetime
+d = datetime.date.today()
+m = ''.join(map(lambda s: s if len(s) > 2 else '0' + s, map(str, d.timetuple()[:2])))
+
+for i in range(60):
+    days=(d - datetime.timedelta(days=i*30))
+    m = ''.join(map(lambda s: s if len(s) > 1 else '0' + s, map(str, days.timetuple()[:2])))
+    print m
+EOF
+}
+
+gen_60_months | while read monline; do
+    wget --no-check-certificate "http://www.twse.com.tw/ch/inc/download.php?l1=%A4W%A5%AB%A4%BD%A5q%A4%EB%B3%F8&l2=%A4j%BDL%A1B%A6U%B2%A3%B7%7E%C3%FE%AA%D1%A4%CE%A4W%A5%AB%AA%D1%B2%BC%A5%BB%AFq%A4%F1%A1B%B4%DE%A7Q%B2v%A4%CE%AA%D1%BB%F9%B2b%AD%C8%A4%F1&url=/ch/statistics/download/04/001/""$monline""_C04001.zip" -O eps/"$monline".zip
+    unzip  eps/"$monline".zip -d ./eps
+    rm eps/"$monline".zip
+    sync
+    cd eps
+    file=$(find -type f -printf '%T+ %p\n' | sort | head -1 | awk '{print $2}')
+    echo "delete $file"
+    mv $file "$monline".xls
+    cd -
+    sync
+done
