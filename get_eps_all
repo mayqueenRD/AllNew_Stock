@@ -22,8 +22,11 @@ gen_60_months | while read monline; do
     sync
     cd eps
     file=$(find -type f -printf '%T+ %p\n' | sort | head -1 | awk '{print $2}')
-    echo "delete $file"
-    mv $file "$monline".xls
-    cd -
+    echo "find $file...."
+    mv $file ./"$monline".xls
+    xls2csv -x "$monline".xls -s cp1252 -d 8859-1 > "$monline".csv
+    rm *.xls
+    rm *.XLS
+    cd ..
     sync
 done
